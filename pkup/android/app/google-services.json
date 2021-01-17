@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "808410846231",
+    "firebase_url": "https://pkup-29b7c-default-rtdb.firebaseio.com",
+    "project_id": "pkup-29b7c",
+    "storage_bucket": "pkup-29b7c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808410846231:android:2277fd120d156af39ff852",
+        "android_client_info": {
+          "package_name": "com.storke.pkup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808410846231-aqsi21ievo8vl3gb9amksek45m74p0mo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzHb3Jsb7jQfAwxCa0I7oC4ejUrOHMU_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808410846231-aqsi21ievo8vl3gb9amksek45m74p0mo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
