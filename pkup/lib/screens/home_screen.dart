@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong/latlong.dart';
 
 class HomeScreen extends StatelessWidget {
   static final String id = 'home';
@@ -55,7 +60,6 @@ class _RegisterGameState extends State<RegisterGame> {
   final _formKey = GlobalKey<FormState>();
   final gameName = TextEditingController();
   var gameDateTime;
-  final gameLoc = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("games");
 
   @override
@@ -63,8 +67,7 @@ class _RegisterGameState extends State<RegisterGame> {
     // New game registration
     return Form(
         key: _formKey,
-        child: SingleChildScrollView(
-            child: Column(
+        child: Column(
           children: <Widget>[
             Padding(
               padding: EdgeInsets.all(20.0),
@@ -109,21 +112,22 @@ class _RegisterGameState extends State<RegisterGame> {
             ),
             Padding(
               padding: EdgeInsets.all(20.0),
-              child: TextFormField(
-                controller: gameLoc,
-                decoration: InputDecoration(
-                  labelText: "Location",
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              child: Container(
+                // here
+                height: 220,
+                alignment: Alignment.centerLeft,
+                child: FlutterMap(
+                  options: new MapOptions(
+                    center: new LatLng(34.413955, -119.845884),
+                    zoom: 14.0,
                   ),
+                  layers: [
+                    new TileLayerOptions(
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: ['a', 'b', 'c']),
+                  ],
                 ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Where?';
-                  }
-                  return null;
-                },
               ),
             ),
             Padding(
@@ -138,13 +142,11 @@ class _RegisterGameState extends State<RegisterGame> {
                           dbRef.push().set({
                             "game_type": gameName.text,
                             "date": gameDateTime,
-                            "location": gameLoc.text
                           }).then((_) {
                             Scaffold.of(context).showSnackBar(
                                 SnackBar(content: Text('Game Posted!')));
                             gameName.clear();
                             gameDateTime.clear();
-                            gameLoc.clear();
                           }).catchError((onError) {
                             Scaffold.of(context)
                                 .showSnackBar(SnackBar(content: Text(onError)));
@@ -156,6 +158,6 @@ class _RegisterGameState extends State<RegisterGame> {
                   ],
                 )),
           ],
-        )));
+        ));
   }
 }
