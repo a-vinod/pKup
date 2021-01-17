@@ -59,6 +59,7 @@ class RegisterGame extends StatefulWidget {
 class _RegisterGameState extends State<RegisterGame> {
   final _formKey = GlobalKey<FormState>();
   final gameName = TextEditingController();
+  final gameLoc = TextEditingController();
   var gameDateTime;
   final dbRef = FirebaseDatabase.instance.reference().child("games");
 
@@ -70,7 +71,7 @@ class _RegisterGameState extends State<RegisterGame> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(20.0),
+              padding: EdgeInsets.all(10.0),
               child: TextFormField(
                 controller: gameName,
                 decoration: InputDecoration(
@@ -89,7 +90,7 @@ class _RegisterGameState extends State<RegisterGame> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(20.0),
+              padding: EdgeInsets.all(10.0),
               child: DateTimePicker(
                 type: DateTimePickerType.dateTimeSeparate,
                 dateMask: 'd MMM, yyyy',
@@ -111,10 +112,10 @@ class _RegisterGameState extends State<RegisterGame> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(20.0),
+              padding: EdgeInsets.all(10.0),
               child: Container(
                 // here
-                height: 220,
+                height: 200,
                 alignment: Alignment.centerLeft,
                 child: FlutterMap(
                   options: new MapOptions(
@@ -131,6 +132,25 @@ class _RegisterGameState extends State<RegisterGame> {
               ),
             ),
             Padding(
+              padding: EdgeInsets.all(10.0),
+              child: TextFormField(
+                controller: gameLoc,
+                decoration: InputDecoration(
+                  labelText: "Location",
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                // The validator receives the text that the user has entered.
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Where?';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -141,6 +161,7 @@ class _RegisterGameState extends State<RegisterGame> {
                         if (_formKey.currentState.validate()) {
                           dbRef.push().set({
                             "game_type": gameName.text,
+                            "game_loc": gameLoc.text,
                             "date": gameDateTime,
                           }).then((_) {
                             Scaffold.of(context).showSnackBar(
