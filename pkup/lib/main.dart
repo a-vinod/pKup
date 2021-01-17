@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,8 +62,7 @@ class RegisterGame extends StatefulWidget {
 class _RegisterGameState extends State<RegisterGame> {
   final _formKey = GlobalKey<FormState>();
   final gameName = TextEditingController();
-  final gameDate = TextEditingController();
-  final gameTime = TextEditingController();
+  var gameDateTime;
   final gameLoc = TextEditingController();
   final dbRef = FirebaseDatabase.instance.reference().child("games");
 
@@ -95,40 +95,24 @@ class _RegisterGameState extends State<RegisterGame> {
             ),
             Padding(
               padding: EdgeInsets.all(20.0),
-              child: TextFormField(
-                controller: gameDate,
-                decoration: InputDecoration(
-                  labelText: "Date",
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'What day?';
-                  }
+              child: DateTimePicker(
+                type: DateTimePickerType.dateTimeSeparate,
+                dateMask: 'd MMM, yyyy',
+                initialValue: DateTime.now().toString(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+                icon: Icon(Icons.event),
+                dateLabelText: 'Date',
+                timeLabelText: 'Hour',
+                selectableDayPredicate: (date) {
+                  return true;
+                },
+                onChanged: (val) => gameDateTime = val,
+                validator: (val) {
+                  print(val);
                   return null;
                 },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(20.0),
-              child: TextFormField(
-                controller: gameTime,
-                decoration: InputDecoration(
-                  labelText: "Time",
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'When?';
-                  }
-                  return null;
-                },
+                onSaved: (val) => gameDateTime = val,
               ),
             ),
             Padding(
@@ -161,15 +145,13 @@ class _RegisterGameState extends State<RegisterGame> {
                         if (_formKey.currentState.validate()) {
                           dbRef.push().set({
                             "game_type": gameName.text,
-                            "date": gameDate.text,
-                            "time": gameTime.text,
+                            "date": gameDateTime,
                             "location": gameLoc.text
                           }).then((_) {
                             Scaffold.of(context).showSnackBar(
                                 SnackBar(content: Text('Game Posted!')));
                             gameName.clear();
-                            gameDate.clear();
-                            gameTime.clear();
+                            gameDateTime.clear();
                             gameLoc.clear();
                           }).catchError((onError) {
                             Scaffold.of(context)
