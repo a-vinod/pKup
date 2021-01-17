@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:atsign_authentication_helper/screens/scan_qr.dart';
 import 'package:flutter/material.dart';
-import '../screens/home_screen.dart';
-import '../services/server_demo_service.dart';
+import '../home/home_screen.dart';
+import '../../services/server_demo_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 

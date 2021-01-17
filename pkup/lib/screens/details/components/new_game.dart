@@ -1,54 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-
-class HomeScreen extends StatelessWidget {
-  static final String id = 'home';
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'pKup',
-      home: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            bottom: TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.directions_car)),
-                Tab(icon: Icon(Icons.directions_transit)),
-              ],
-            ),
-            title: Text('pKup Games'),
-          ),
-          body: TabBarView(
-            children: [
-              Game(),
-              RegisterGame(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class Game extends StatefulWidget {
-  @override
-  _GameState createState() => _GameState();
-}
-
-class _GameState extends State<Game> {
-  @override
-  Widget build(BuildContext context) {
-    final game_id = Text("Rutvik's Game");
-    return game_id;
-  }
-}
 
 class RegisterGame extends StatefulWidget {
   @override
