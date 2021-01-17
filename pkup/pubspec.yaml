@@ -28,6 +28,13 @@ dependencies:
   flutter_map: "^0.10.1"
   latlong: "^0.6.1"
   date_time_picker: "^1.1.1"
+  modal_progress_hud: any
+  at_client_mobile: "^1.0.0"
+  atsign_authentication_helper:
+    git:
+      url: git@github.com:atsign-foundation/at_widgets.git
+      path: atsign_authentication_helper
+      ref: dev_env
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
