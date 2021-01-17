@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong/latlong.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,12 +15,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'pKup',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('pKup Games'),
-        ),
-        body: Center(
-          child: RegisterGame(),
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.directions_car)),
+                Tab(icon: Icon(Icons.directions_transit)),
+              ],
+            ),
+            title: Text('pKup Games'),
+          ),
+          body: TabBarView(
+            children: [
+              Game(),
+              RegisterGame(),
+            ],
+          ),
         ),
       ),
     );
@@ -29,8 +43,6 @@ class Game extends StatefulWidget {
   @override
   _GameState createState() => _GameState();
 }
-
-/**/
 
 class _GameState extends State<Game> {
   @override
