@@ -8,7 +8,7 @@ List<Alignment> cardsAlign = [
   Alignment(0.0, 0.8),
   Alignment(0.0, 0.0)
 ];
-List<Size> cardsSize = List(3);
+List<Size> cardsSize = List(100);
 
 class CardsSectionAlignment extends StatefulWidget {
   CardsSectionAlignment(BuildContext context) {
@@ -36,13 +36,13 @@ class _CardsSectionState extends State<CardsSectionAlignment>
   double frontCardRot = 0.0;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
 
     final dbRef = FirebaseDatabase.instance.reference().child("games");
 
     // Init cards
-    for (cardsCounter = 0; cardsCounter < 3; cardsCounter++) {
+    for (cardsCounter = 0; cardsCounter < 100; cardsCounter++) {
       cards.add(ProfileCardAlignment(cardsCounter));
     }
 

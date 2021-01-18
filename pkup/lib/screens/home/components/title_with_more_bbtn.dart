@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:flutter/material.dart';
+import 'package:at_client_mobile/at_client_mobile.dart';
 import '../../../constants.dart';
 
 class TitleWithMoreBtn extends StatelessWidget {
@@ -86,137 +87,163 @@ class RegisterGame extends StatefulWidget {
 
 //
 class _RegisterGameState extends State<RegisterGame> {
+  final KeyChainManager _keyChainManager = KeyChainManager.getInstance();
   final _formKey = GlobalKey<FormState>();
   final gameName = TextEditingController();
   final gameLoc = TextEditingController();
   String gameDateTime = "";
   final dbRef = FirebaseDatabase.instance.reference().child("games");
+  String host;
 
+  @override
+  Future<String> getAtsign() async {
+    String host;
+    FutureBuilder<String>(
+      future: _keyChainManager.getAtSign(),
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data != null) {
+            host = snapshot.data;
+          }
+        }
+      },
+    );
+    return host;
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     // New game registration
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: Text('New @PiKUP'),
-        ),
-        body: Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextFormField(
-                    controller: gameName,
-                    decoration: InputDecoration(
-                      labelText: "Game Type",
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'What kind of game?';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: DateTimePicker(
-                    type: DateTimePickerType.dateTimeSeparate,
-                    dateMask: 'd MMM, yyyy',
-                    initialValue: DateTime.now().toString(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                    icon: Icon(Icons.event),
-                    dateLabelText: 'Date',
-                    timeLabelText: 'Hour',
-                    selectableDayPredicate: (date) {
-                      return true;
-                    },
-                    onChanged: (val) => gameDateTime = val,
-                    validator: (val) {
-                      print(val);
-                      return null;
-                    },
-                    onSaved: (val) => gameDateTime = val,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Container(
-                    // here
-                    height: 200,
-                    alignment: Alignment.centerLeft,
-                    child: FlutterMap(
-                      options: new MapOptions(
-                        center: new LatLng(34.413955, -119.845884),
-                        zoom: 14.0,
-                      ),
-                      layers: [
-                        new TileLayerOptions(
-                            urlTemplate:
-                                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            subdomains: ['a', 'b', 'c']),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: TextFormField(
-                    controller: gameLoc,
-                    decoration: InputDecoration(
-                      labelText: "Location",
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Where?';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        RaisedButton(
-                          color: kPrimaryColor,
-                          onPressed: () {
-                            if (_formKey.currentState.validate()) {
-                              if (gameDateTime.isEmpty) {
-                                gameDateTime = DateTime.now().toString();
-                              }
-                              dbRef.push().set({
-                                "type": gameName.text,
-                                "loc": gameLoc.text,
-                                "date_time": gameDateTime,
-                              }).then((_) {
-                                Scaffold.of(context).showSnackBar(
-                                    SnackBar(content: Text('Game Posted!')));
-                                gameName.clear();
-                              }).catchError((onError) {
-                                Scaffold.of(context).showSnackBar(
-                                    SnackBar(content: Text(onError)));
-                              });
-                              Navigator.pop(context);
+    return FutureBuilder(
+        future: _keyChainManager.getAtSign(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                title: Text('New @PiKUP'),
+              ),
+              body: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: TextFormField(
+                          controller: gameName,
+                          decoration: InputDecoration(
+                            labelText: "Game Type",
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'What kind of game?';
                             }
+                            return null;
                           },
-                          child: Text('Submit',
-                              style: TextStyle(color: Colors.white)),
                         ),
-                      ],
-                    )),
-              ],
-            )));
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: DateTimePicker(
+                          type: DateTimePickerType.dateTimeSeparate,
+                          dateMask: 'd MMM, yyyy',
+                          initialValue: DateTime.now().toString(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                          icon: Icon(Icons.event),
+                          dateLabelText: 'Date',
+                          timeLabelText: 'Hour',
+                          selectableDayPredicate: (date) {
+                            return true;
+                          },
+                          onChanged: (val) => gameDateTime = val,
+                          validator: (val) {
+                            print(val);
+                            return null;
+                          },
+                          onSaved: (val) => gameDateTime = val,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Container(
+                          // here
+                          height: 200,
+                          alignment: Alignment.centerLeft,
+                          child: FlutterMap(
+                            options: new MapOptions(
+                              center: new LatLng(34.413955, -119.845884),
+                              zoom: 14.0,
+                            ),
+                            layers: [
+                              new TileLayerOptions(
+                                  urlTemplate:
+                                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                                  subdomains: ['a', 'b', 'c']),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: TextFormField(
+                          controller: gameLoc,
+                          decoration: InputDecoration(
+                            labelText: "Location",
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Where?';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              RaisedButton(
+                                color: kPrimaryColor,
+                                onPressed: () {
+                                  if (_formKey.currentState.validate()) {
+                                    if (gameDateTime.isEmpty) {
+                                      gameDateTime = DateTime.now().toString();
+                                    }
+                                    dbRef.push().set({
+                                      "type": gameName.text,
+                                      "loc": gameLoc.text,
+                                      "date_time": gameDateTime,
+                                      "host": snapshot.data
+                                    }).then((_) {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                              content: Text('Game Posted!')));
+                                      gameName.clear();
+                                    }).catchError((onError) {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(content: Text(onError)));
+                                    });
+
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: Text('Submit',
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            ],
+                          )),
+                    ],
+                  )));
+        });
   }
 }
