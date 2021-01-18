@@ -8,6 +8,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class LoginScreen extends StatefulWidget {
   static final String id = 'login';
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
